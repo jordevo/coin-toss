@@ -2,7 +2,14 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import "./App.css";
 
+const COIN_HEADS_ID = "coin-heads-test";
+const COIN_TAILS_ID = "coin-tails-test";
+
 const COIN_STATE = { HEADS: "heads", TAILS: "tails" };
+
+const FLIP_DURATION = 400;
+
+const FLIPS = 1;
 
 const TossButton = styled.button`
   background: transparent;
@@ -22,40 +29,192 @@ const HeadsTailsCounter = styled.div`
   width: 100%;
 `;
 
+const ResultNotification = styled.div`
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  width: 100%;
+
+  h4 {
+    margin: auto;
+  }
+`;
+
+const keyframesFrontFlip = [
+  {
+    offset: 0.25,
+    transform: "perspective(400px) rotate3d(0, 1, 0, 90deg)",
+  },
+  {
+    offset: 0.25,
+    visibility: "hidden",
+  },
+  {
+    offset: 0.75,
+    visibility: "hidden",
+  },
+  {
+    offset: 0.75,
+    transform: "perspective(400px) rotate3d(0, 1, 0, 270deg)",
+    visibility: "visible",
+  },
+  {
+    offset: 1,
+    transform: "perspective(400px) rotate3d(0, 1, 0, 360deg)",
+  },
+];
+const keyframesFrontHalfFlip = [
+  {
+    offset: 0.5,
+    transform: "perspective(400px) rotate3d(0, 1, 0, 90deg)",
+  },
+  {
+    offset: 0.5,
+    visibility: "hidden",
+  },
+  {
+    offset: 1,
+    visibility: "hidden",
+  },
+];
+const keyframesBackFlip = [
+  {
+    offset: 0,
+    visibility: "hidden",
+  },
+  {
+    offset: 0.25,
+    visibility: "hidden",
+  },
+  {
+    offset: 0.25,
+    transform: "perspective(400px) rotate3d(0, 1, 0, 270deg)",
+    visibility: "visible",
+  },
+  { offset: 0.5, transform: "perspective(400px) rotate3d(0, 1, 0, 360deg)" },
+  { offset: 0.75, transform: "perspective(400px) rotate3d(0, 1, 0, 450deg)" },
+  {
+    offset: 0.75,
+    visibility: "hidden",
+  },
+  {
+    offset: 1,
+    visibility: "hidden",
+  },
+];
+const keyframesBackHalfFlip = [
+  {
+    offset: 0,
+    visibility: "hidden",
+  },
+  {
+    offset: 0.5,
+    visibility: "hidden",
+  },
+  {
+    offset: 0.5,
+    transform: "perspective(400px) rotate3d(0, 1, 0, 270deg)",
+    visibility: "visible",
+  },
+  { offset: 1, transform: "perspective(400px) rotate3d(0, 1, 0, 360deg)" },
+];
+
+const timingFlip = {
+  duration: FLIP_DURATION,
+  iterations: FLIPS,
+};
+
+const timingHalfFlip = {
+  duration: FLIP_DURATION / 2,
+  iterations: 1,
+};
+
 function App() {
   const [coinState, setCoinState] = useState(COIN_STATE.HEADS);
   const [headsCount, setHeadsCount] = useState(0);
   const [tailsCount, setTailsCount] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
 
-  const getNextState = () => {
+  const tossCoin = () => {
+    setIsAnimating(true);
     const nextState = Math.random() < 0.5 ? COIN_STATE.HEADS : COIN_STATE.TAILS;
-    nextState === COIN_STATE.HEADS
-      ? setHeadsCount(headsCount + 1)
-      : setTailsCount(tailsCount + 1);
-    setCoinState(nextState);
+    const willFlip = coinState !== nextState;
+
+    let COIN_FRONT_ID = COIN_HEADS_ID;
+    let COIN_BACK_ID = COIN_TAILS_ID;
+
+    if (coinState === COIN_STATE.TAILS) {
+      COIN_FRONT_ID = COIN_TAILS_ID;
+      COIN_BACK_ID = COIN_HEADS_ID;
+    }
+
+    const coinFront = document.querySelector(`#${COIN_FRONT_ID}`);
+    const coinBack = document.querySelector(`#${COIN_BACK_ID}`);
+
+    const animation = coinFront.animate(keyframesFrontFlip, timingFlip);
+    coinBack.animate(keyframesBackFlip, timingFlip);
+
+    animation.onfinish = () => {
+      if (willFlip) {
+        const flipAnimation = coinFront.animate(
+          keyframesFrontHalfFlip,
+          timingHalfFlip
+        );
+        coinBack.animate(keyframesBackHalfFlip, timingHalfFlip);
+        flipAnimation.onfinish = () => {
+          setCoinState(nextState);
+          setIsAnimating(false);
+          nextState === COIN_STATE.HEADS
+            ? setHeadsCount(headsCount + 1)
+            : setTailsCount(tailsCount + 1);
+        };
+      } else {
+        setCoinState(nextState);
+        setIsAnimating(false);
+        nextState === COIN_STATE.HEADS
+          ? setHeadsCount(headsCount + 1)
+          : setTailsCount(tailsCount + 1);
+      }
+    };
   };
+
+  const _getZ = (side) => Number(Boolean(side === coinState));
 
   return (
     <div className="App">
       <section className="App-content">
-        <div className="flip-container">
-          <div className="flipper">
-            <div className="front"></div>
-            <div className="back"></div>
-          </div>
+        <div className="coin-container">
+          <div
+            className="coin-heads-test"
+            id="coin-heads-test"
+            style={{ zIndex: 2 * _getZ(COIN_STATE.HEADS) }}
+          ></div>
+          <div
+            className="coin-tails-test"
+            id="coin-tails-test"
+            style={{ zIndex: 2 * _getZ(COIN_STATE.TAILS) }}
+          ></div>
         </div>
-        <TossButton onClick={getNextState}>Coin Toss</TossButton>
-        {headsCount || tailsCount ? <h4>You got {coinState}</h4> : <></>}
-        <HeadsTailsCounter>
-          <div>
-            <h4>Heads</h4>
-            <p>{headsCount}</p>
-          </div>
-          <div>
-            <h4>Tails</h4>
-            <p>{tailsCount}</p>
-          </div>
-        </HeadsTailsCounter>
+        <TossButton onClick={tossCoin}>Coin Toss</TossButton>
+        <ResultNotification>
+          {(headsCount || tailsCount) && !isAnimating ? (
+            <h4>You got {coinState}</h4>
+          ) : (
+            <></>
+          )}
+        </ResultNotification>
+        {false && ( // no need to display heads / tails counter for now
+          <HeadsTailsCounter>
+            <div>
+              <h4>Heads</h4>
+              <p>{headsCount}</p>
+            </div>
+            <div>
+              <h4>Tails</h4>
+              <p>{tailsCount}</p>
+            </div>
+          </HeadsTailsCounter>
+        )}
       </section>
     </div>
   );
