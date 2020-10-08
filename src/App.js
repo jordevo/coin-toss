@@ -1,15 +1,19 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import "./App.css";
+import {
+  keyframesFrontFlip,
+  keyframesFrontHalfFlip,
+  keyframesBackFlip,
+  keyframesBackHalfFlip,
+  timingFlip,
+  timingHalfFlip,
+} from "./animations";
 
 const COIN_HEADS_ID = "coin-heads-test";
 const COIN_TAILS_ID = "coin-tails-test";
 
 const COIN_STATE = { HEADS: "heads", TAILS: "tails" };
-
-const FLIP_DURATION = 400;
-
-const FLIPS = 1;
 
 const TossButton = styled.button`
   background: transparent;
@@ -39,95 +43,6 @@ const ResultNotification = styled.div`
     margin: auto;
   }
 `;
-
-const keyframesFrontFlip = [
-  {
-    offset: 0.25,
-    transform: "perspective(400px) rotate3d(0, 1, 0, 90deg)",
-  },
-  {
-    offset: 0.25,
-    visibility: "hidden",
-  },
-  {
-    offset: 0.75,
-    visibility: "hidden",
-  },
-  {
-    offset: 0.75,
-    transform: "perspective(400px) rotate3d(0, 1, 0, 270deg)",
-    visibility: "visible",
-  },
-  {
-    offset: 1,
-    transform: "perspective(400px) rotate3d(0, 1, 0, 360deg)",
-  },
-];
-const keyframesFrontHalfFlip = [
-  {
-    offset: 0.5,
-    transform: "perspective(400px) rotate3d(0, 1, 0, 90deg)",
-  },
-  {
-    offset: 0.5,
-    visibility: "hidden",
-  },
-  {
-    offset: 1,
-    visibility: "hidden",
-  },
-];
-const keyframesBackFlip = [
-  {
-    offset: 0,
-    visibility: "hidden",
-  },
-  {
-    offset: 0.25,
-    visibility: "hidden",
-  },
-  {
-    offset: 0.25,
-    transform: "perspective(400px) rotate3d(0, 1, 0, 270deg)",
-    visibility: "visible",
-  },
-  { offset: 0.5, transform: "perspective(400px) rotate3d(0, 1, 0, 360deg)" },
-  { offset: 0.75, transform: "perspective(400px) rotate3d(0, 1, 0, 450deg)" },
-  {
-    offset: 0.75,
-    visibility: "hidden",
-  },
-  {
-    offset: 1,
-    visibility: "hidden",
-  },
-];
-const keyframesBackHalfFlip = [
-  {
-    offset: 0,
-    visibility: "hidden",
-  },
-  {
-    offset: 0.5,
-    visibility: "hidden",
-  },
-  {
-    offset: 0.5,
-    transform: "perspective(400px) rotate3d(0, 1, 0, 270deg)",
-    visibility: "visible",
-  },
-  { offset: 1, transform: "perspective(400px) rotate3d(0, 1, 0, 360deg)" },
-];
-
-const timingFlip = {
-  duration: FLIP_DURATION,
-  iterations: FLIPS,
-};
-
-const timingHalfFlip = {
-  duration: FLIP_DURATION / 2,
-  iterations: 1,
-};
 
 function App() {
   const [coinState, setCoinState] = useState(COIN_STATE.HEADS);
