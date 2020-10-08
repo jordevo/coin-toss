@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import cx from "classnames";
 import styled from "styled-components";
 import "./App.css";
 import {
@@ -95,17 +97,18 @@ function App() {
 
   const _getZ = (side) => Number(Boolean(side === coinState));
 
-  return (
-    <div className="App">
-      <section className="App-content">
+  const _getCoin = ({ showTrump = false } = {}) => {
+    console.log({ showTrump });
+    return (
+      <>
         <div className="coin-container">
           <div
-            className="coin-heads-test"
+            className={cx("coin-heads-test", { "coin-heads-trump": showTrump })}
             id="coin-heads-test"
             style={{ zIndex: 2 * _getZ(COIN_STATE.HEADS) }}
           ></div>
           <div
-            className="coin-tails-test"
+            className={cx("coin-tails-test", { "coin-tails-trump": showTrump })}
             id="coin-tails-test"
             style={{ zIndex: 2 * _getZ(COIN_STATE.TAILS) }}
           ></div>
@@ -130,6 +133,19 @@ function App() {
             </div>
           </HeadsTailsCounter>
         )}
+      </>
+    );
+  };
+
+  return (
+    <div className="App">
+      <section className="App-content">
+        <Router>
+          <Switch>
+            <Route path="/trump">{() => _getCoin({ showTrump: true })}</Route>
+            <Route path="/">{() => _getCoin()}</Route>
+          </Switch>
+        </Router>
       </section>
     </div>
   );

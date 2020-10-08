@@ -45,6 +45,11 @@
   z-index: 2;
   transform-style: preserve-3d;
 }
+
+.coin-heads-test.coin-heads-trump {
+  background-image: url("./img/headsTrump.png");
+}
+
 /*
 .coin-heads-test:after {
   background-color: #725d01;
@@ -97,6 +102,11 @@
   z-index: 1;
   transform-style: preserve-3d;
 }
+
+.coin-tails-test.coin-tails-trump {
+  background-image: url("./img/tailsTrump.png");
+}
+
 /*
 .coin-tails-test:after {
   background-color: #caa992;
