@@ -1,37 +1,33 @@
 .App {
+  margin: auto;
   text-align: center;
-}
-
-@media screen and (min-width: 480px) {
-  .App {
-    margin: auto;
-    max-width: 80vw;
-  }
-}
-
-@media screen and (min-width: 960px) {
-  .App {
-    max-width: 60vw;
-  }
+  width: 100vw;
 }
 
 .App-content {
+  align-items: stretch;
   display: flex;
   flex-flow: column;
-  align-items: center;
   justify-content: center;
 }
 
+.buttons-container {
+  align-items: stretch;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  width: 375px;
+}
 .coin-container {
   position: relative;
   height: 400px;
-  width: 400px;
+  width: 375px;
 }
 
 .coin-heads-test {
   display: block;
-  width: 360px;
-  height: 360px;
+  width: 375px;
+  height: 375px;
   margin: auto;
   backface-visibility: hidden;
   background-image: url("./img/heads.png");
@@ -41,7 +37,7 @@
   position: absolute;
   transform-style: preserve-3d;
   top: 20px;
-  left: 20px;
+  left: 0px;
   z-index: 2;
   transform-style: preserve-3d;
 }
@@ -88,8 +84,8 @@
 
 .coin-tails-test {
   display: block;
-  width: 360px;
-  height: 360px;
+  width: 375px;
+  height: 375px;
   margin: auto;
   backface-visibility: hidden;
   background-image: url("./img/tails.png");
@@ -98,7 +94,7 @@
   background-size: contain;
   position: absolute;
   top: 20px;
-  left: 20px;
+  left: 0px;
   z-index: 1;
   transform-style: preserve-3d;
 }
@@ -143,3 +139,20 @@
   width: 360px;
 }
 */
+
+/* media queries */
+
+@media screen and (min-width: 480px) {
+  .App {
+    max-width: 80vw;
+  }
+  .App-content {
+    align-items: center;
+  }
+}
+
+@media screen and (min-width: 960px) {
+  .App {
+    max-width: 60vw;
+  }
+}

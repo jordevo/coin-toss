@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useReducer } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import cx from "classnames";
 import styled from "styled-components";
@@ -10,12 +10,14 @@ import {
   keyframesBackHalfFlip,
   timingFlip,
   timingHalfFlip,
+  timingFastFlip,
+  timingHalfFastFlip,
 } from "./animations";
+
+import { ACTIONS, COIN_STATE, INITIAL_STATE, reducer } from "./reducer";
 
 const COIN_HEADS_ID = "coin-heads-test";
 const COIN_TAILS_ID = "coin-tails-test";
-
-const COIN_STATE = { HEADS: "heads", TAILS: "tails" };
 
 const TossButton = styled.button`
   background: transparent;
@@ -28,11 +30,14 @@ const TossButton = styled.button`
   padding: 1em 4em;
 `;
 
-const HeadsTailsCounter = styled.div`
-  display: flex;
+const ResultsConsole = styled.div`
   color: darkgray;
-  justify-content: space-around;
-  width: 100%;
+  height: 240px;
+  margin: 0.5em 1em;
+  overflow: scroll-y;
+  padding: 0.5em;
+  text-align: left;
+  text-transform: uppercase;
 `;
 
 const ResultNotification = styled.div`
@@ -47,58 +52,111 @@ const ResultNotification = styled.div`
 `;
 
 function App() {
-  const [coinState, setCoinState] = useState(COIN_STATE.HEADS);
-  const [headsCount, setHeadsCount] = useState(0);
-  const [tailsCount, setTailsCount] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
-  const tossCoin = () => {
-    setIsAnimating(true);
-    const nextState = Math.random() < 0.5 ? COIN_STATE.HEADS : COIN_STATE.TAILS;
-    const willFlip = coinState !== nextState;
+  const tossCoin = useCallback(
+    ({
+      fast = false,
+      numberOfTailsToStop = INITIAL_STATE.numberOfTailsToStop,
+    } = {}) => {
+      dispatch({
+        type: ACTIONS.STOP_AFTER_N_TAILS,
+        payload: numberOfTailsToStop,
+      });
+      dispatch({ type: ACTIONS.ANIMATION_STARTS });
 
-    let COIN_FRONT_ID = COIN_HEADS_ID;
-    let COIN_BACK_ID = COIN_TAILS_ID;
+      const timing = fast ? timingFastFlip : timingFlip;
+      const timingHalf = fast ? timingHalfFastFlip : timingHalfFlip;
 
-    if (coinState === COIN_STATE.TAILS) {
-      COIN_FRONT_ID = COIN_TAILS_ID;
-      COIN_BACK_ID = COIN_HEADS_ID;
-    }
+      const nextState =
+        Math.random() < 0.5 ? COIN_STATE.HEADS : COIN_STATE.TAILS;
+      const willFlip = state.coinState !== nextState;
 
-    const coinFront = document.querySelector(`#${COIN_FRONT_ID}`);
-    const coinBack = document.querySelector(`#${COIN_BACK_ID}`);
+      dispatch({ type: ACTIONS.COIN_STATE_UPDATE, payload: nextState });
+      nextState === COIN_STATE.HEADS
+        ? dispatch({ type: ACTIONS.HEADS_COUNT_INCREMENT })
+        : dispatch({ type: ACTIONS.TAILS_COUNT_INCREMENT });
 
-    const animation = coinFront.animate(keyframesFrontFlip, timingFlip);
-    coinBack.animate(keyframesBackFlip, timingFlip);
+      let COIN_FRONT_ID = COIN_HEADS_ID;
+      let COIN_BACK_ID = COIN_TAILS_ID;
 
-    animation.onfinish = () => {
-      if (willFlip) {
-        const flipAnimation = coinFront.animate(
-          keyframesFrontHalfFlip,
-          timingHalfFlip
-        );
-        coinBack.animate(keyframesBackHalfFlip, timingHalfFlip);
-        flipAnimation.onfinish = () => {
-          setCoinState(nextState);
-          setIsAnimating(false);
-          nextState === COIN_STATE.HEADS
-            ? setHeadsCount(headsCount + 1)
-            : setTailsCount(tailsCount + 1);
-        };
-      } else {
-        setCoinState(nextState);
-        setIsAnimating(false);
-        nextState === COIN_STATE.HEADS
-          ? setHeadsCount(headsCount + 1)
-          : setTailsCount(tailsCount + 1);
+      if (state.coinState === COIN_STATE.TAILS) {
+        COIN_FRONT_ID = COIN_TAILS_ID;
+        COIN_BACK_ID = COIN_HEADS_ID;
       }
-    };
-  };
 
-  const _getZ = (side) => Number(Boolean(side === coinState));
+      const coinFront = document.querySelector(`#${COIN_FRONT_ID}`);
+      const coinBack = document.querySelector(`#${COIN_BACK_ID}`);
 
-  const _getCoin = ({ showTrump = false } = {}) => {
-    console.log({ showTrump });
+      const animation = coinFront.animate(keyframesFrontFlip, timing);
+      coinBack.animate(keyframesBackFlip, timing);
+
+      animation.onfinish = () => {
+        if (willFlip) {
+          const flipAnimation = coinFront.animate(
+            keyframesFrontHalfFlip,
+            timingHalf
+          );
+          coinBack.animate(keyframesBackHalfFlip, timingHalf);
+          flipAnimation.onfinish = () =>
+            dispatch({ type: ACTIONS.ANIMATION_STOPS });
+        } else {
+          return () => dispatch({ type: ACTIONS.ANIMATION_STOPS });
+        }
+      };
+    },
+    [state.coinState]
+  );
+
+  const tossUntilTails = useCallback(() => {
+    dispatch({ type: ACTIONS.SET_ANIMATION_FAST });
+    return tossCoin({
+      fast: state.isAnimatingFast,
+      numberOfTailsToStop: state.numberOfTailsToStop,
+    });
+  }, [state.isAnimatingFast, state.numberOfTailsToStop, tossCoin]);
+
+  const _getZ = (side) => Number(Boolean(side === state.coinState));
+
+  useEffect(() => {
+    if (state.numberOfTailsToStop === 0) {
+      dispatch({
+        type: ACTIONS.SUCCESS_MESSAGE_UPDATE,
+        payload: `You got ${state.coinState}.`,
+      });
+    } else {
+      const lastResults = state.results.slice(-state.numberOfTailsToStop);
+      if (
+        lastResults.filter((toss) => toss === COIN_STATE.TAILS).length ===
+        state.numberOfTailsToStop
+      ) {
+        dispatch({ type: ACTIONS.STOP_TOSSING });
+      } else {
+        dispatch({ type: ACTIONS.KEEP_TOSSING });
+      }
+    }
+    if (!state.isAnimating && state.keepTossing) {
+      return tossUntilTails();
+    }
+    if (!state.isAnimating && !state.keepTossing && state.results.length > 1) {
+      dispatch({
+        type: ACTIONS.SUCCESS_MESSAGE_UPDATE,
+        payload: `You got it! it took ${state.results.length} tosses.`,
+      });
+      dispatch({
+        type: ACTIONS.RESULTS_RESET,
+      });
+    }
+  }, [
+    state.coinState,
+    state.isAnimating,
+    state.keepTossing,
+    state.numberOfTailsToStop,
+    state.results,
+    tossUntilTails,
+  ]);
+
+  const _getCoin = ({ sevenTails = false, showTrump = false } = {}) => {
     return (
       <>
         <div className="coin-container">
@@ -113,25 +171,41 @@ function App() {
             style={{ zIndex: 2 * _getZ(COIN_STATE.TAILS) }}
           ></div>
         </div>
-        <TossButton onClick={tossCoin}>Coin Toss</TossButton>
+        <div className="buttons-container">
+          <TossButton
+            onClick={() => {
+              dispatch({ type: ACTIONS.SUCCESS_MESSAGE_RESET });
+              dispatch({ type: ACTIONS.RESULTS_RESET });
+              dispatch({ type: ACTIONS.HEADS_COUNT_RESET });
+              dispatch({ type: ACTIONS.TAILS_COUNT_RESET });
+              tossCoin();
+            }}
+          >
+            Coin Toss
+          </TossButton>
+          {sevenTails && (
+            <TossButton
+              onClick={() => {
+                dispatch({ type: ACTIONS.SUCCESS_MESSAGE_RESET });
+                dispatch({ type: ACTIONS.RESULTS_RESET });
+                dispatch({ type: ACTIONS.HEADS_COUNT_RESET });
+                dispatch({ type: ACTIONS.TAILS_COUNT_RESET });
+                tossUntilTails();
+              }}
+            >
+              Toss Until 7 Tails in a Row
+            </TossButton>
+          )}
+        </div>
         <ResultNotification>
-          {(headsCount || tailsCount) && !isAnimating ? (
-            <h4>You got {coinState}</h4>
+          {(state.headsCount || state.tailsCount) && !state.isAnimating ? (
+            <h4>{state.successMessage}</h4>
           ) : (
             <></>
           )}
         </ResultNotification>
-        {false && ( // no need to display heads / tails counter for now
-          <HeadsTailsCounter>
-            <div>
-              <h4>Heads</h4>
-              <p>{headsCount}</p>
-            </div>
-            <div>
-              <h4>Tails</h4>
-              <p>{tailsCount}</p>
-            </div>
-          </HeadsTailsCounter>
+        {sevenTails && (
+          <ResultsConsole>{state.results.join(", ")}</ResultsConsole>
         )}
       </>
     );
@@ -142,7 +216,13 @@ function App() {
       <section className="App-content">
         <Router>
           <Switch>
+            <Route path="/seventails">
+              {() => _getCoin({ sevenTails: true })}
+            </Route>
             <Route path="/trump">{() => _getCoin({ showTrump: true })}</Route>
+            <Route path="/trump/seventails">
+              {() => _getCoin({ showTrump: true, sevenTails: true })}
+            </Route>
             <Route path="/">{() => _getCoin()}</Route>
           </Switch>
         </Router>
