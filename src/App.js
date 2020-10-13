@@ -54,67 +54,62 @@ const ResultNotification = styled.div`
 function App() {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
-  const tossCoin = useCallback(
-    ({
-      fast = false,
-      numberOfTailsToStop = INITIAL_STATE.numberOfTailsToStop,
-    } = {}) => {
-      dispatch({
-        type: ACTIONS.STOP_AFTER_N_TAILS,
-        payload: numberOfTailsToStop,
-      });
-      dispatch({ type: ACTIONS.ANIMATION_STARTS });
+  const tossCoin = useCallback(() => {
+    dispatch({ type: ACTIONS.ANIMATION_STARTS });
 
-      const timing = fast ? timingFastFlip : timingFlip;
-      const timingHalf = fast ? timingHalfFastFlip : timingHalfFlip;
+    const timing = state.isAnimatingFast ? timingFastFlip : timingFlip;
+    const timingHalf = state.isAnimatingFast
+      ? timingHalfFastFlip
+      : timingHalfFlip;
 
-      const nextState =
-        Math.random() < 0.5 ? COIN_STATE.HEADS : COIN_STATE.TAILS;
-      const willFlip = state.coinState !== nextState;
+    const nextState = Math.random() < 0.5 ? COIN_STATE.HEADS : COIN_STATE.TAILS;
+    const willFlip = state.coinState !== nextState;
 
-      dispatch({ type: ACTIONS.COIN_STATE_UPDATE, payload: nextState });
-      nextState === COIN_STATE.HEADS
-        ? dispatch({ type: ACTIONS.HEADS_COUNT_INCREMENT })
-        : dispatch({ type: ACTIONS.TAILS_COUNT_INCREMENT });
+    dispatch({ type: ACTIONS.COIN_STATE_UPDATE, payload: nextState });
+    nextState === COIN_STATE.HEADS
+      ? dispatch({ type: ACTIONS.HEADS_COUNT_INCREMENT })
+      : dispatch({ type: ACTIONS.TAILS_COUNT_INCREMENT });
 
-      let COIN_FRONT_ID = COIN_HEADS_ID;
-      let COIN_BACK_ID = COIN_TAILS_ID;
+    let COIN_FRONT_ID = COIN_HEADS_ID;
+    let COIN_BACK_ID = COIN_TAILS_ID;
 
-      if (state.coinState === COIN_STATE.TAILS) {
-        COIN_FRONT_ID = COIN_TAILS_ID;
-        COIN_BACK_ID = COIN_HEADS_ID;
+    if (state.coinState === COIN_STATE.TAILS) {
+      COIN_FRONT_ID = COIN_TAILS_ID;
+      COIN_BACK_ID = COIN_HEADS_ID;
+    }
+
+    const coinFront = document.querySelector(`#${COIN_FRONT_ID}`);
+    const coinBack = document.querySelector(`#${COIN_BACK_ID}`);
+
+    const animation = coinFront.animate(keyframesFrontFlip, timing);
+    coinBack.animate(keyframesBackFlip, timing);
+
+    animation.onfinish = () => {
+      if (willFlip) {
+        const flipAnimation = coinFront.animate(
+          keyframesFrontHalfFlip,
+          timingHalf
+        );
+        coinBack.animate(keyframesBackHalfFlip, timingHalf);
+        flipAnimation.onfinish = () => {
+          dispatch({ type: ACTIONS.ANIMATION_STOPS });
+          dispatch({ type: ACTIONS.RESET_ANIMATION_FAST });
+        };
+      } else {
+        return () => {
+          dispatch({ type: ACTIONS.ANIMATION_STOPS });
+          dispatch({ type: ACTIONS.RESET_ANIMATION_FAST });
+        };
       }
+    };
+  }, [state.coinState]);
 
-      const coinFront = document.querySelector(`#${COIN_FRONT_ID}`);
-      const coinBack = document.querySelector(`#${COIN_BACK_ID}`);
-
-      const animation = coinFront.animate(keyframesFrontFlip, timing);
-      coinBack.animate(keyframesBackFlip, timing);
-
-      animation.onfinish = () => {
-        if (willFlip) {
-          const flipAnimation = coinFront.animate(
-            keyframesFrontHalfFlip,
-            timingHalf
-          );
-          coinBack.animate(keyframesBackHalfFlip, timingHalf);
-          flipAnimation.onfinish = () =>
-            dispatch({ type: ACTIONS.ANIMATION_STOPS });
-        } else {
-          return () => dispatch({ type: ACTIONS.ANIMATION_STOPS });
-        }
-      };
-    },
-    [state.coinState]
-  );
-
-  const tossUntilTails = useCallback(() => {
+  const tossUntilTails = useEffect(() => {
+    if (!state.keepTossing) return;
     dispatch({ type: ACTIONS.SET_ANIMATION_FAST });
-    return tossCoin({
-      fast: state.isAnimatingFast,
-      numberOfTailsToStop: state.numberOfTailsToStop,
-    });
-  }, [state.isAnimatingFast, state.numberOfTailsToStop, tossCoin]);
+    dispatch({ type: ACTIONS.STOP_AFTER_N_TAILS, payload: 3 });
+    tossCoin();
+  }, [state.keepTossing]);
 
   const _getZ = (side) => Number(Boolean(side === state.coinState));
 

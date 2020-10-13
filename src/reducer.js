@@ -1,5 +1,6 @@
 export const ACTIONS = {
   SET_ANIMATION_FAST: "SET_ANIMATION_FAST",
+  RESET_ANIMATION_FAST: "RESET_ANIMATION_FAST",
   ANIMATION_STARTS: "ANIMATION_STARTS",
   ANIMATION_STOPS: "ANIMATION_STOPS",
   COIN_STATE_UPDATE: "COIN_STATE_UPDATE",
@@ -57,6 +58,8 @@ export const reducer = (state, action) => {
       return { ...state, results: action.payload };
     case ACTIONS.SET_ANIMATION_FAST:
       return { ...state, isAnimatingFast: true };
+    case ACTIONS.RESET_ANIMATION_FAST:
+      return { ...state, isAnimatingFast: false };
     case ACTIONS.STOP_TOSSING:
       return { ...state, keepTossing: false };
     case ACTIONS.STOP_AFTER_N_TAILS:
