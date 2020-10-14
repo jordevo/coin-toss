@@ -237,10 +237,10 @@ function App() {
             <Route path="/seventails">
               {() => _getCoin({ sevenTails: true })}
             </Route>
-            <Route path="/trump">{() => _getCoin({ showTrump: true })}</Route>
             <Route path="/trump/seventails">
               {() => _getCoin({ showTrump: true, sevenTails: true })}
             </Route>
+            <Route path="/trump">{() => _getCoin({ showTrump: true })}</Route>
             <Route path="/">{() => _getCoin()}</Route>
           </Switch>
         </Router>
