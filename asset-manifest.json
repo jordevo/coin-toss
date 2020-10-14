@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/coin-toss/static/css/main.2ec5916c.chunk.css",
+    "main.js": "/coin-toss/static/js/main.220fb0ba.chunk.js",
+    "main.js.map": "/coin-toss/static/js/main.220fb0ba.chunk.js.map",
+    "runtime-main.js": "/coin-toss/static/js/runtime-main.462fd917.js",
+    "runtime-main.js.map": "/coin-toss/static/js/runtime-main.462fd917.js.map",
+    "static/js/2.79954cd1.chunk.js": "/coin-toss/static/js/2.79954cd1.chunk.js",
+    "static/js/2.79954cd1.chunk.js.map": "/coin-toss/static/js/2.79954cd1.chunk.js.map",
+    "index.html": "/coin-toss/index.html",
+    "precache-manifest.bfa7bbe452c5d6f7837dcfa6d090e97f.js": "/coin-toss/precache-manifest.bfa7bbe452c5d6f7837dcfa6d090e97f.js",
+    "service-worker.js": "/coin-toss/service-worker.js",
+    "static/css/main.2ec5916c.chunk.css.map": "/coin-toss/static/css/main.2ec5916c.chunk.css.map",
+    "static/js/2.79954cd1.chunk.js.LICENSE.txt": "/coin-toss/static/js/2.79954cd1.chunk.js.LICENSE.txt",
+    "static/media/App.css": "/coin-toss/static/media/tailsTrump.6418a3c3.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.462fd917.js",
+    "static/js/2.79954cd1.chunk.js",
+    "static/css/main.2ec5916c.chunk.css",
+    "static/js/main.220fb0ba.chunk.js"
+  ]
+}
