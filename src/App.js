@@ -232,7 +232,7 @@ function App() {
   return (
     <div className="App">
       <section className="App-content">
-        <Router>
+        <Router basename={process.env.PUBLIC_URL}>
           <Switch>
             <Route path="/seventails">
               {() => _getCoin({ sevenTails: true })}
