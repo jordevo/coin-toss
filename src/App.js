@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import cx from "classnames";
 import styled from "styled-components";
@@ -34,7 +34,7 @@ const ResultsConsole = styled.div`
   color: darkgray;
   height: 240px;
   margin: 0.5em 1em;
-  overflow: scroll-y;
+  overflow-y: scroll;
   padding: 0.5em;
   text-align: left;
   text-transform: uppercase;
@@ -52,6 +52,7 @@ const ResultNotification = styled.div`
 `;
 
 function App() {
+  const resultsConsoleElement = useRef(null);
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
   useEffect(() => {
@@ -164,6 +165,8 @@ function App() {
         type: ACTIONS.CONSOLE_MESSAGE_UPDATE,
         payload: state.results.join(", "),
       });
+      resultsConsoleElement.current.scrollTop =
+        resultsConsoleElement.current.scrollHeight;
     }
   }, [state.results]);
 
@@ -217,7 +220,11 @@ function App() {
             <></>
           )}
         </ResultNotification>
-        {sevenTails && <ResultsConsole>{state.consoleMessage}</ResultsConsole>}
+        {sevenTails && (
+          <ResultsConsole ref={resultsConsoleElement}>
+            {state.consoleMessage}
+          </ResultsConsole>
+        )}
       </>
     );
   };
