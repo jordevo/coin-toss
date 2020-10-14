@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useRef } from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import cx from "classnames";
 import styled from "styled-components";
 import "./App.css";
@@ -232,7 +232,7 @@ function App() {
   return (
     <div className="App">
       <section className="App-content">
-        <Router basename={process.env.PUBLIC_URL}>
+        <Router basename="/">
           <Switch>
             <Route path="/seventails">
               {() => _getCoin({ sevenTails: true })}
