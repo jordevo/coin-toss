@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "05a131514e3a33fe4e559c425d77b9db",
+    "revision": "24acabedeeb5f2df98cc2df15521181d",
     "url": "/coin-toss/index.html"
   },
   {
