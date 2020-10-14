@@ -32,7 +32,7 @@ export const INITIAL_STATE = {
   isAnimating: false,
   isAnimatingFast: false,
   tailsCount: 0,
-  numberOfTailsToStop: 3,
+  numberOfTailsToStop: 7,
   results: [],
   successMessage: "",
 };

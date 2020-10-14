@@ -115,6 +115,7 @@ function App() {
     state.isAnimatingFast,
     state.isAnimating,
     state.tossCoin,
+    state.results,
   ]);
 
   const _getZ = (side) => Number(Boolean(side === state.coinState));
@@ -122,15 +123,11 @@ function App() {
   useEffect(() => {
     if (!state.tossCoinUntilTails || state.isAnimating || state.isAnimatingFast)
       return;
-    dispatch({ type: ACTIONS.SET_ANIMATION_FAST });
-    dispatch({ type: ACTIONS.TOSS_COIN });
     const lastResults = state.results.slice(-state.numberOfTailsToStop);
-    console.log(state.results);
     if (
       lastResults.filter((toss) => toss === COIN_STATE.TAILS).length ===
       state.numberOfTailsToStop
     ) {
-      console.log("do I pass");
       dispatch({ type: ACTIONS.TOSS_COIN_UNTIL_TAILS_RESET });
       dispatch({
         type: ACTIONS.SUCCESS_MESSAGE_UPDATE,
@@ -140,9 +137,11 @@ function App() {
         type: ACTIONS.CONSOLE_MESSAGE_UPDATE,
         payload: state.results.join(", "),
       });
+    } else {
+      dispatch({ type: ACTIONS.SET_ANIMATION_FAST });
+      dispatch({ type: ACTIONS.TOSS_COIN });
     }
   }, [
-    state.coinState,
     state.isAnimating,
     state.isAnimatingFast,
     state.numberOfTailsToStop,
@@ -161,7 +160,6 @@ function App() {
 
   useEffect(() => {
     if (state.results.length > 1) {
-      console.log("state.results.length", state.results.length);
       dispatch({
         type: ACTIONS.CONSOLE_MESSAGE_UPDATE,
         payload: state.results.join(", "),
