@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "24acabedeeb5f2df98cc2df15521181d",
+    "revision": "8f87f25b5ea750ca5be84db619b72ed2",
     "url": "/coin-toss/index.html"
   },
   {
-    "revision": "1594889013147b51057d",
+    "revision": "a95508b308478681a7af",
     "url": "/coin-toss/static/css/main.2ec5916c.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/coin-toss/static/js/2.79954cd1.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "1594889013147b51057d",
-    "url": "/coin-toss/static/js/main.220fb0ba.chunk.js"
+    "revision": "a95508b308478681a7af",
+    "url": "/coin-toss/static/js/main.ca4a2ccb.chunk.js"
   },
   {
     "revision": "76eb8607a4d03d36d820",

@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/coin-toss/static/css/main.2ec5916c.chunk.css",
-    "main.js": "/coin-toss/static/js/main.220fb0ba.chunk.js",
-    "main.js.map": "/coin-toss/static/js/main.220fb0ba.chunk.js.map",
+    "main.js": "/coin-toss/static/js/main.ca4a2ccb.chunk.js",
+    "main.js.map": "/coin-toss/static/js/main.ca4a2ccb.chunk.js.map",
     "runtime-main.js": "/coin-toss/static/js/runtime-main.462fd917.js",
     "runtime-main.js.map": "/coin-toss/static/js/runtime-main.462fd917.js.map",
     "static/js/2.79954cd1.chunk.js": "/coin-toss/static/js/2.79954cd1.chunk.js",
     "static/js/2.79954cd1.chunk.js.map": "/coin-toss/static/js/2.79954cd1.chunk.js.map",
     "index.html": "/coin-toss/index.html",
-    "precache-manifest.f9fec07951f2c7d570497312bd0d465b.js": "/coin-toss/precache-manifest.f9fec07951f2c7d570497312bd0d465b.js",
+    "precache-manifest.c9b9cc7ab03f93d4e8a1b3c6c03133c2.js": "/coin-toss/precache-manifest.c9b9cc7ab03f93d4e8a1b3c6c03133c2.js",
     "service-worker.js": "/coin-toss/service-worker.js",
     "static/css/main.2ec5916c.chunk.css.map": "/coin-toss/static/css/main.2ec5916c.chunk.css.map",
     "static/js/2.79954cd1.chunk.js.LICENSE.txt": "/coin-toss/static/js/2.79954cd1.chunk.js.LICENSE.txt",
@@ -18,6 +18,6 @@
     "static/js/runtime-main.462fd917.js",
     "static/js/2.79954cd1.chunk.js",
     "static/css/main.2ec5916c.chunk.css",
-    "static/js/main.220fb0ba.chunk.js"
+    "static/js/main.ca4a2ccb.chunk.js"
   ]
 }
