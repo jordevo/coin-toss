@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import cx from "classnames";
 import styled from "styled-components";
@@ -54,8 +54,8 @@ const ResultNotification = styled.div`
 function App() {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
-  const tossCoin = useCallback(() => {
-    dispatch({ type: ACTIONS.ANIMATION_STARTS });
+  useEffect(() => {
+    if (!state.tossCoin || state.isAnimating) return;
 
     const timing = state.isAnimatingFast ? timingFastFlip : timingFlip;
     const timingHalf = state.isAnimatingFast
@@ -65,7 +65,6 @@ function App() {
     const nextState = Math.random() < 0.5 ? COIN_STATE.HEADS : COIN_STATE.TAILS;
     const willFlip = state.coinState !== nextState;
 
-    dispatch({ type: ACTIONS.COIN_STATE_UPDATE, payload: nextState });
     nextState === COIN_STATE.HEADS
       ? dispatch({ type: ACTIONS.HEADS_COUNT_INCREMENT })
       : dispatch({ type: ACTIONS.TAILS_COUNT_INCREMENT });
@@ -81,75 +80,94 @@ function App() {
     const coinFront = document.querySelector(`#${COIN_FRONT_ID}`);
     const coinBack = document.querySelector(`#${COIN_BACK_ID}`);
 
-    const animation = coinFront.animate(keyframesFrontFlip, timing);
-    coinBack.animate(keyframesBackFlip, timing);
+    if (!state.isAnimating) {
+      const animation = coinFront.animate(keyframesFrontFlip, timing);
+      coinBack.animate(keyframesBackFlip, timing);
 
-    animation.onfinish = () => {
-      if (willFlip) {
-        const flipAnimation = coinFront.animate(
-          keyframesFrontHalfFlip,
-          timingHalf
-        );
-        coinBack.animate(keyframesBackHalfFlip, timingHalf);
-        flipAnimation.onfinish = () => {
+      animation.onfinish = () => {
+        if (willFlip) {
+          const flipAnimation = coinFront.animate(
+            keyframesFrontHalfFlip,
+            timingHalf
+          );
+          coinBack.animate(keyframesBackHalfFlip, timingHalf);
+          flipAnimation.onfinish = () => {
+            dispatch({ type: ACTIONS.TOSS_COIN_RESET });
+            dispatch({ type: ACTIONS.ANIMATION_STOPS });
+            dispatch({ type: ACTIONS.RESET_ANIMATION_FAST });
+          };
+        } else {
+          dispatch({ type: ACTIONS.TOSS_COIN_RESET });
           dispatch({ type: ACTIONS.ANIMATION_STOPS });
           dispatch({ type: ACTIONS.RESET_ANIMATION_FAST });
-        };
-      } else {
-        return () => {
-          dispatch({ type: ACTIONS.ANIMATION_STOPS });
-          dispatch({ type: ACTIONS.RESET_ANIMATION_FAST });
-        };
-      }
-    };
-  }, [state.coinState]);
+        }
+      };
+      dispatch({ type: ACTIONS.ANIMATION_STARTS });
+    }
 
-  const tossUntilTails = useEffect(() => {
-    if (!state.keepTossing) return;
-    dispatch({ type: ACTIONS.SET_ANIMATION_FAST });
-    dispatch({ type: ACTIONS.STOP_AFTER_N_TAILS, payload: 3 });
-    tossCoin();
-  }, [state.keepTossing]);
+    dispatch({ type: ACTIONS.COIN_STATE_UPDATE, payload: nextState });
+    dispatch({
+      type: ACTIONS.RESULTS_UPDATE,
+      payload: state.results.concat([nextState]),
+    });
+  }, [
+    state.coinState,
+    state.isAnimatingFast,
+    state.isAnimating,
+    state.tossCoin,
+  ]);
 
   const _getZ = (side) => Number(Boolean(side === state.coinState));
 
   useEffect(() => {
-    if (state.numberOfTailsToStop === 0) {
-      dispatch({
-        type: ACTIONS.SUCCESS_MESSAGE_UPDATE,
-        payload: `You got ${state.coinState}.`,
-      });
-    } else {
-      const lastResults = state.results.slice(-state.numberOfTailsToStop);
-      if (
-        lastResults.filter((toss) => toss === COIN_STATE.TAILS).length ===
-        state.numberOfTailsToStop
-      ) {
-        dispatch({ type: ACTIONS.STOP_TOSSING });
-      } else {
-        dispatch({ type: ACTIONS.KEEP_TOSSING });
-      }
-    }
-    if (!state.isAnimating && state.keepTossing) {
-      return tossUntilTails();
-    }
-    if (!state.isAnimating && !state.keepTossing && state.results.length > 1) {
+    if (!state.tossCoinUntilTails || state.isAnimating || state.isAnimatingFast)
+      return;
+    dispatch({ type: ACTIONS.SET_ANIMATION_FAST });
+    dispatch({ type: ACTIONS.TOSS_COIN });
+    const lastResults = state.results.slice(-state.numberOfTailsToStop);
+    console.log(state.results);
+    if (
+      lastResults.filter((toss) => toss === COIN_STATE.TAILS).length ===
+      state.numberOfTailsToStop
+    ) {
+      console.log("do I pass");
+      dispatch({ type: ACTIONS.TOSS_COIN_UNTIL_TAILS_RESET });
       dispatch({
         type: ACTIONS.SUCCESS_MESSAGE_UPDATE,
         payload: `You got it! it took ${state.results.length} tosses.`,
       });
       dispatch({
-        type: ACTIONS.RESULTS_RESET,
+        type: ACTIONS.CONSOLE_MESSAGE_UPDATE,
+        payload: state.results.join(", "),
       });
     }
   }, [
     state.coinState,
     state.isAnimating,
-    state.keepTossing,
+    state.isAnimatingFast,
     state.numberOfTailsToStop,
     state.results,
-    tossUntilTails,
+    state.tossCoinUntilTails,
   ]);
+
+  useEffect(() => {
+    if (!state.tossCoinUntilTails && state.results.length === 1) {
+      dispatch({
+        type: ACTIONS.SUCCESS_MESSAGE_UPDATE,
+        payload: `You got ${state.coinState}.`,
+      });
+    }
+  }, [state.coinState, state.results, state.tossCoinUntilTails]);
+
+  useEffect(() => {
+    if (state.results.length > 1) {
+      console.log("state.results.length", state.results.length);
+      dispatch({
+        type: ACTIONS.CONSOLE_MESSAGE_UPDATE,
+        payload: state.results.join(", "),
+      });
+    }
+  }, [state.results]);
 
   const _getCoin = ({ sevenTails = false, showTrump = false } = {}) => {
     return (
@@ -169,11 +187,12 @@ function App() {
         <div className="buttons-container">
           <TossButton
             onClick={() => {
+              dispatch({ type: ACTIONS.CONSOLE_MESSAGE_RESET });
               dispatch({ type: ACTIONS.SUCCESS_MESSAGE_RESET });
               dispatch({ type: ACTIONS.RESULTS_RESET });
               dispatch({ type: ACTIONS.HEADS_COUNT_RESET });
               dispatch({ type: ACTIONS.TAILS_COUNT_RESET });
-              tossCoin();
+              dispatch({ type: ACTIONS.TOSS_COIN });
             }}
           >
             Coin Toss
@@ -181,11 +200,12 @@ function App() {
           {sevenTails && (
             <TossButton
               onClick={() => {
+                dispatch({ type: ACTIONS.CONSOLE_MESSAGE_RESET });
                 dispatch({ type: ACTIONS.SUCCESS_MESSAGE_RESET });
                 dispatch({ type: ACTIONS.RESULTS_RESET });
                 dispatch({ type: ACTIONS.HEADS_COUNT_RESET });
                 dispatch({ type: ACTIONS.TAILS_COUNT_RESET });
-                tossUntilTails();
+                dispatch({ type: ACTIONS.TOSS_COIN_UNTIL_TAILS });
               }}
             >
               Toss Until 7 Tails in a Row
@@ -199,9 +219,7 @@ function App() {
             <></>
           )}
         </ResultNotification>
-        {sevenTails && (
-          <ResultsConsole>{state.results.join(", ")}</ResultsConsole>
-        )}
+        {sevenTails && <ResultsConsole>{state.consoleMessage}</ResultsConsole>}
       </>
     );
   };
