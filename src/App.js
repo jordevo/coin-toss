@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useRef } from "react";
-import { HashRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import cx from "classnames";
 import styled from "styled-components";
 import "./App.css";
