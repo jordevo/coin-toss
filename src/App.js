@@ -232,7 +232,7 @@ function App() {
   return (
     <div className="App">
       <section className="App-content">
-        <Router basename="/">
+        <Router>
           <Switch>
             <Route path="/coin/seventails">
               {() => _getCoin({ sevenTails: true })}
