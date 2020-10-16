@@ -234,14 +234,14 @@ function App() {
       <section className="App-content">
         <Router basename="/">
           <Switch>
-            <Route path="/seventails">
+            <Route path="/coin/seventails">
               {() => _getCoin({ sevenTails: true })}
             </Route>
+            <Route path="/coin">{() => _getCoin()}</Route>
             <Route path="/trump/seventails">
               {() => _getCoin({ showTrump: true, sevenTails: true })}
             </Route>
             <Route path="/trump">{() => _getCoin({ showTrump: true })}</Route>
-            <Route path="/">{() => _getCoin()}</Route>
           </Switch>
         </Router>
       </section>
