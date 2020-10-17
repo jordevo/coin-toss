@@ -1,6 +1,6 @@
-export const FLIP_DURATION = 500;
+export const FLIP_DURATION = 400;
 
-export const FLIPS = 1;
+export const FLIPS = 4;
 
 export const keyframesFrontFlip = [
   {
@@ -95,11 +95,11 @@ export const timingHalfFlip = {
 };
 
 export const timingFastFlip = {
-  duration: FLIP_DURATION / 4,
+  duration: FLIP_DURATION / 2,
   iterations: FLIPS,
 };
 
 export const timingHalfFastFlip = {
-  duration: FLIP_DURATION / 8,
+  duration: FLIP_DURATION / 4,
   iterations: 1,
 };
