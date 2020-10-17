@@ -14,8 +14,8 @@ import {
 
 import { ACTIONS, COIN_STATE, INITIAL_STATE, reducer } from "./reducer";
 
-const COIN_HEADS_ID = "coin-heads-test";
-const COIN_TAILS_ID = "coin-tails-test";
+const COIN_HEADS_ID = "coin-heads";
+const COIN_TAILS_ID = "coin-tails";
 
 const TossButton = styled.button`
   background: transparent;
@@ -173,13 +173,13 @@ export const Coin = ({ sevenTails = false, showTrump = false }) => {
       <>
         <div className="coin-container">
           <div
-            className={cx("coin-heads-test", { "coin-heads-trump": showTrump })}
-            id="coin-heads-test"
+            className={cx("coin-heads", { "coin-heads-trump": showTrump })}
+            id="coin-heads"
             style={{ zIndex: 2 * _getZ(COIN_STATE.HEADS) }}
           ></div>
           <div
-            className={cx("coin-tails-test", { "coin-tails-trump": showTrump })}
-            id="coin-tails-test"
+            className={cx("coin-tails", { "coin-tails-trump": showTrump })}
+            id="coin-tails"
             style={{ zIndex: 2 * _getZ(COIN_STATE.TAILS) }}
           ></div>
         </div>

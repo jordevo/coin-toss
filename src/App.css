@@ -24,7 +24,7 @@
   width: 375px;
 }
 
-.coin-heads-test {
+.coin-heads {
   display: block;
   width: 375px;
   height: 375px;
@@ -42,12 +42,12 @@
   transform-style: preserve-3d;
 }
 
-.coin-heads-test.coin-heads-trump {
+.coin-heads.coin-heads-trump {
   background-image: url("./img/headsTrump.png");
 }
 
 /*
-.coin-heads-test:after {
+.coin-heads:after {
   background-color: #725d01;
   background-image: -webkit-linear-gradient(
     hsla(25, 35%, 68%, 0.25),
@@ -64,7 +64,7 @@
   z-index: -10;
 }
 
-.coin-heads-test:before {
+.coin-heads:before {
   backface-visibility: hidden;
   background-color: #725d01;
   background-image: -webkit-linear-gradient(
@@ -82,7 +82,7 @@
   width: 360px;
 }*/
 
-.coin-tails-test {
+.coin-tails {
   display: block;
   width: 375px;
   height: 375px;
@@ -99,12 +99,12 @@
   transform-style: preserve-3d;
 }
 
-.coin-tails-test.coin-tails-trump {
+.coin-tails.coin-tails-trump {
   background-image: url("./img/tailsTrump.png");
 }
 
 /*
-.coin-tails-test:after {
+.coin-tails:after {
   background-color: #caa992;
   background-image: -webkit-linear-gradient(
     hsla(25, 35%, 68%, 0.25),
@@ -121,7 +121,7 @@
   z-index: -10;
 }
 
-.coin-tails-test:before {
+.coin-tails:before {
   backface-visibility: hidden;
   background-color: #caa992;
   background-image: -webkit-linear-gradient(
