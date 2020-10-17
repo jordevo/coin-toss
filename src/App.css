@@ -30,7 +30,7 @@
   height: 375px;
   margin: auto;
   backface-visibility: hidden;
-  background-image: url("./img/heads.png");
+  background-image: url("./img/carapol.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
@@ -43,7 +43,7 @@
 }
 
 .coin-heads-test.coin-heads-trump {
-  background-image: url("./img/headsTrump.png");
+  background-image: url("./img/caramarta.png");
 }
 
 /*
