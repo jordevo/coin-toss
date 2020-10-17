@@ -207,7 +207,7 @@ export const Coin = ({ sevenTails = false, showTrump = false }) => {
                 dispatch({ type: ACTIONS.TOSS_COIN_UNTIL_TAILS });
               }}
             >
-              Toss Until 7 Tails in a Row
+              Coin toss until 7 tails in a row
             </TossButton>
           )}
         </div>
