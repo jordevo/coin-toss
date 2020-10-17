@@ -49,7 +49,7 @@ const ResultNotification = styled.div`
   }
 `;
 
-export const Coin = ({ sevenTails, showTrump }) => {
+export const Coin = ({ sevenTails = false, showTrump = false }) => {
   const resultsConsoleElement = useRef(null);
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 

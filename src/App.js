@@ -6,7 +6,6 @@ import "./App.css";
 function App() {
   return (
     <div className="App">
-      <h1>blabla</h1>
       <section className="App-content">
         <Router>
           <Switch>
@@ -22,8 +21,8 @@ function App() {
             <Route exact path="/trump">
               <Coin showTrump />
             </Route>
-            <Route>
-              <h1>blabla</h1>
+            <Route path="/">
+              <></>
             </Route>
           </Switch>
         </Router>
