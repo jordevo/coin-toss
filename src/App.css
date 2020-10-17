@@ -88,7 +88,7 @@
   height: 375px;
   margin: auto;
   backface-visibility: hidden;
-  background-image: url("./img/tails.png");
+  background-image: url("./img/caramarta.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
@@ -100,7 +100,7 @@
 }
 
 .coin-tails-test.coin-tails-trump {
-  background-image: url("./img/tailsTrump.png");
+  background-image: url("./img/carapol.png");
 }
 
 /*
