@@ -152,7 +152,9 @@ export const Coin = ({ sevenTails = false, showTrump = false }) => {
     if (!state.tossCoinUntilTails && state.results.length === 1) {
       dispatch({
         type: ACTIONS.SUCCESS_MESSAGE_UPDATE,
-        payload: `You got ${state.coinState}.`,
+        payload: `You got ${
+          state.coinState === COIN_STATE.HEADS ? "Pol" : "Marta"
+        }.`,
       });
     }
   }, [state.coinState, state.results, state.tossCoinUntilTails]);
