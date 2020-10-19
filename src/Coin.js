@@ -253,16 +253,12 @@ export const Coin = ({
           <></>
         )}
       </ResultNotification>
-      {sevenTails && (
-        <>
-          {Boolean(state.consoleMessage.length) && (
-            <h5 style={{ margin: 0 }}>Outcome history:</h5>
-          )}
-          <ResultsConsole ref={resultsConsoleElement}>
-            {state.consoleMessage}
-          </ResultsConsole>
-        </>
+      {Boolean(state.consoleMessage.length) && (
+        <h5 style={{ margin: 0 }}>Outcome history:</h5>
       )}
+      <ResultsConsole ref={resultsConsoleElement}>
+        {state.consoleMessage}
+      </ResultsConsole>
     </>
   );
 };
