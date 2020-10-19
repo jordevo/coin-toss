@@ -217,7 +217,6 @@ export const Coin = ({
       <div className="buttons-container">
         <TossButton
           onClick={() => {
-            // dispatch({ type: ACTIONS.CONSOLE_MESSAGE_RESET });
             dispatch({ type: ACTIONS.SUCCESS_MESSAGE_RESET });
             dispatch({ type: ACTIONS.RESULTS_RESET });
             dispatch({ type: ACTIONS.HEADS_COUNT_RESET });
@@ -231,7 +230,6 @@ export const Coin = ({
         {sevenTails && (
           <TossButton
             onClick={() => {
-              // dispatch({ type: ACTIONS.CONSOLE_MESSAGE_RESET });
               dispatch({ type: ACTIONS.SUCCESS_MESSAGE_RESET });
               dispatch({ type: ACTIONS.RESULTS_RESET });
               dispatch({ type: ACTIONS.HEADS_COUNT_RESET });
