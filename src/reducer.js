@@ -32,7 +32,7 @@ export const INITIAL_STATE = {
   isAnimating: false,
   isAnimatingFast: false,
   tailsCount: 0,
-  numberOfTailsToStop: 7,
+  numberOfTailsToStop: 3,
   results: [],
   successMessage: "",
 };
@@ -48,7 +48,10 @@ export const reducer = (state, action) => {
     case ACTIONS.COIN_STATE_RESET:
       return { ...state, coinState: INITIAL_STATE.coinState };
     case ACTIONS.CONSOLE_MESSAGE_UPDATE:
-      return { ...state, consoleMessage: action.payload };
+      return {
+        ...state,
+        consoleMessage: `${state.consoleMessage} ${action.payload}`,
+      };
     case ACTIONS.CONSOLE_MESSAGE_RESET:
       return { ...state, consoleMessage: INITIAL_STATE.consoleMessage };
     case ACTIONS.HEADS_COUNT_INCREMENT:

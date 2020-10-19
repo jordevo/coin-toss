@@ -152,10 +152,6 @@ export const Coin = ({
         type: ACTIONS.SUCCESS_MESSAGE_UPDATE,
         payload: `You got it! it took ${state.results.length} tosses.`,
       });
-      dispatch({
-        type: ACTIONS.CONSOLE_MESSAGE_UPDATE,
-        payload: state.results.join(", "),
-      });
     } else {
       dispatch({ type: ACTIONS.SET_ANIMATION_FAST });
       dispatch({ type: ACTIONS.TOSS_COIN });
@@ -169,21 +165,36 @@ export const Coin = ({
   ]);
 
   useEffect(() => {
-    if (!state.tossCoinUntilTails && state.results.length === 1) {
+    if (
+      !state.tossCoin &&
+      !state.tossCoinUntilTails &&
+      state.results.length === 1
+    ) {
       dispatch({
         type: ACTIONS.SUCCESS_MESSAGE_UPDATE,
         payload: `You got ${coinStateLiterals[state.coinState]}.`,
       });
+      dispatch({
+        type: ACTIONS.CONSOLE_MESSAGE_UPDATE,
+        payload: coinStateLiterals[state.coinState],
+      });
+      resultsConsoleElement.current.scrollTop =
+        resultsConsoleElement.current.scrollHeight;
     }
   }, [
     state.coinState,
     state.results,
+    state.tossCoin,
     state.tossCoinUntilTails,
     coinStateLiterals,
   ]);
 
   useEffect(() => {
-    if (state.results.length > 1) {
+    if (
+      !state.tossCoin &&
+      !state.tossCoinUntilTails &&
+      state.results.length > 1
+    ) {
       const resultsLiterals = state.results.map(
         (result) => coinStateLiterals[result]
       );
@@ -194,7 +205,13 @@ export const Coin = ({
       resultsConsoleElement.current.scrollTop =
         resultsConsoleElement.current.scrollHeight;
     }
-  }, [state.results, coinStateLiterals]);
+  }, [
+    coinStateLiterals,
+    state.consoleMessage,
+    state.results,
+    state.tossCoin,
+    state.tossCoinUntilTails,
+  ]);
 
   return (
     <>
@@ -219,26 +236,28 @@ export const Coin = ({
       <div className="buttons-container">
         <TossButton
           onClick={() => {
-            dispatch({ type: ACTIONS.CONSOLE_MESSAGE_RESET });
+            // dispatch({ type: ACTIONS.CONSOLE_MESSAGE_RESET });
             dispatch({ type: ACTIONS.SUCCESS_MESSAGE_RESET });
             dispatch({ type: ACTIONS.RESULTS_RESET });
             dispatch({ type: ACTIONS.HEADS_COUNT_RESET });
             dispatch({ type: ACTIONS.TAILS_COUNT_RESET });
             dispatch({ type: ACTIONS.TOSS_COIN });
           }}
+          disabled={state.tossCoin}
         >
           Coin Toss
         </TossButton>
         {sevenTails && (
           <TossButton
             onClick={() => {
-              dispatch({ type: ACTIONS.CONSOLE_MESSAGE_RESET });
+              // dispatch({ type: ACTIONS.CONSOLE_MESSAGE_RESET });
               dispatch({ type: ACTIONS.SUCCESS_MESSAGE_RESET });
               dispatch({ type: ACTIONS.RESULTS_RESET });
               dispatch({ type: ACTIONS.HEADS_COUNT_RESET });
               dispatch({ type: ACTIONS.TAILS_COUNT_RESET });
               dispatch({ type: ACTIONS.TOSS_COIN_UNTIL_TAILS });
             }}
+            disabled={state.tossCoin}
           >
             {`Keep tossing until 7 ${
               coinStateLiterals[COIN_STATE.TAILS]
@@ -253,9 +272,11 @@ export const Coin = ({
           <></>
         )}
       </ResultNotification>
-      {sevenTails && state.results.length > 1 && (
+      {sevenTails && (
         <>
-          <h5 style={{ margin: 0 }}>Outcome history:</h5>
+          {Boolean(state.consoleMessage.length) && (
+            <h5 style={{ margin: 0 }}>Outcome history:</h5>
+          )}
           <ResultsConsole ref={resultsConsoleElement}>
             {state.consoleMessage}
           </ResultsConsole>
