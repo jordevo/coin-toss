@@ -174,12 +174,6 @@ export const Coin = ({
         type: ACTIONS.SUCCESS_MESSAGE_UPDATE,
         payload: `You got ${coinStateLiterals[state.coinState]}.`,
       });
-      dispatch({
-        type: ACTIONS.CONSOLE_MESSAGE_UPDATE,
-        payload: coinStateLiterals[state.coinState],
-      });
-      resultsConsoleElement.current.scrollTop =
-        resultsConsoleElement.current.scrollHeight;
     }
   }, [
     state.coinState,
@@ -190,28 +184,15 @@ export const Coin = ({
   ]);
 
   useEffect(() => {
-    if (
-      !state.tossCoin &&
-      !state.tossCoinUntilTails &&
-      state.results.length > 1
-    ) {
-      const resultsLiterals = state.results.map(
-        (result) => coinStateLiterals[result]
-      );
+    if (!state.tossCoin && state.results.length >= 1) {
       dispatch({
         type: ACTIONS.CONSOLE_MESSAGE_UPDATE,
-        payload: resultsLiterals.join(", "),
+        payload: coinStateLiterals[state.coinState],
       });
       resultsConsoleElement.current.scrollTop =
         resultsConsoleElement.current.scrollHeight;
     }
-  }, [
-    coinStateLiterals,
-    state.consoleMessage,
-    state.results,
-    state.tossCoin,
-    state.tossCoinUntilTails,
-  ]);
+  }, [state.coinState, state.results, state.tossCoin, coinStateLiterals]);
 
   return (
     <>
