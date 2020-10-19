@@ -1,6 +1,6 @@
 export const FLIP_DURATION = 400;
 
-export const FLIPS = 4;
+export const FLIPS = 2;
 
 export const keyframesFrontFlip = [
   {
