@@ -25,7 +25,7 @@ const TossButton = styled.button`
   font-size: 1em;
   margin: 0.5em 1em;
   outline: none;
-  padding: 1em 4em;
+  padding: 1em 2em;
 `;
 
 const ResultsConsole = styled.div`
