@@ -55,6 +55,12 @@ const ResultNotification = styled.div`
   }
 `;
 
+const COIN_STATE_LITERALS = {
+  DEFAULT: { [COIN_STATE.HEADS]: "heads", [COIN_STATE.TAILS]: "tails" },
+  SHAPES: { [COIN_STATE.HEADS]: "square", [COIN_STATE.TAILS]: "circle" },
+  TRUMP: { [COIN_STATE.HEADS]: "GO-TRUMP!", [COIN_STATE.TAILS]: "BAN-TRUMP!" },
+};
+
 export const Coin = ({
   sevenTails = false,
   showTrump = false,
@@ -62,6 +68,10 @@ export const Coin = ({
 } = {}) => {
   const resultsConsoleElement = useRef(null);
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
+
+  let coinStateLiterals = COIN_STATE_LITERALS.DEFAULT;
+  if (showTrump) coinStateLiterals = COIN_STATE_LITERALS.TRUMP;
+  if (showShapes) coinStateLiterals = COIN_STATE_LITERALS.SHAPES;
 
   useEffect(() => {
     if (!state.tossCoin || state.isAnimating) return;
@@ -162,21 +172,29 @@ export const Coin = ({
     if (!state.tossCoinUntilTails && state.results.length === 1) {
       dispatch({
         type: ACTIONS.SUCCESS_MESSAGE_UPDATE,
-        payload: `You got ${state.coinState}.`,
+        payload: `You got ${coinStateLiterals[state.coinState]}.`,
       });
     }
-  }, [state.coinState, state.results, state.tossCoinUntilTails]);
+  }, [
+    state.coinState,
+    state.results,
+    state.tossCoinUntilTails,
+    coinStateLiterals,
+  ]);
 
   useEffect(() => {
     if (state.results.length > 1) {
+      const resultsLiterals = state.results.map(
+        (result) => coinStateLiterals[result]
+      );
       dispatch({
         type: ACTIONS.CONSOLE_MESSAGE_UPDATE,
-        payload: state.results.join(", "),
+        payload: resultsLiterals.join(", "),
       });
       resultsConsoleElement.current.scrollTop =
         resultsConsoleElement.current.scrollHeight;
     }
-  }, [state.results]);
+  }, [state.results, coinStateLiterals]);
 
   return (
     <>
@@ -222,7 +240,9 @@ export const Coin = ({
               dispatch({ type: ACTIONS.TOSS_COIN_UNTIL_TAILS });
             }}
           >
-            Keep tossing until 7 tails in a row
+            {`Keep tossing until 7 ${
+              coinStateLiterals[COIN_STATE.TAILS]
+            } in a row`}
           </TossButton>
         )}
       </div>
@@ -233,7 +253,7 @@ export const Coin = ({
           <></>
         )}
       </ResultNotification>
-      {sevenTails && state.results.length > 0 && (
+      {sevenTails && state.results.length > 1 && (
         <>
           <h5 style={{ margin: 0 }}>Outcome history:</h5>
           <ResultsConsole ref={resultsConsoleElement}>
