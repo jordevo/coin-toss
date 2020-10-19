@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { HashRouter as Router, Route } from "react-router-dom";
 import { Coin } from "./Coin";
 import "./App.css";
 
@@ -26,7 +26,7 @@ function App() {
           <Route exact path="/shapes">
             <Coin showShapes />
           </Route>
-          <Route path="/" component={() => <></>} />
+          <Route path="*" component={() => <></>} />
         </section>
       </div>
     </Router>
