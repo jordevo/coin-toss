@@ -153,8 +153,10 @@ export const Coin = ({
         payload: `You got it! it took ${state.results.length} tosses.`,
       });
     } else {
-      dispatch({ type: ACTIONS.SET_ANIMATION_FAST });
-      dispatch({ type: ACTIONS.TOSS_COIN });
+      setTimeout(() => {
+        dispatch({ type: ACTIONS.SET_ANIMATION_FAST });
+        dispatch({ type: ACTIONS.TOSS_COIN });
+      }, 250);
     }
   }, [
     state.isAnimating,
