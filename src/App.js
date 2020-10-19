@@ -1,13 +1,13 @@
 import React from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
-import Coin from "./Coin";
+import { Coin } from "./Coin";
 import "./App.css";
 
 function App() {
   return (
-    <div className="App">
-      <section className="App-content">
-        <Router>
+    <Router>
+      <div className="App">
+        <section className="App-content">
           <Route exact path="/coin/seventails">
             <Coin sevenTails />
           </Route>
@@ -20,12 +20,16 @@ function App() {
           <Route exact path="/trump">
             <Coin showTrump />
           </Route>
-          <Route path="/">
-            <></>
+          <Route exact path="/shapes/seventails">
+            <Coin sevenTails showShapes />
           </Route>
-        </Router>
-      </section>
-    </div>
+          <Route exact path="/shapes">
+            <Coin showShapes />
+          </Route>
+          <Route path="/" component={() => <></>} />
+        </section>
+      </div>
+    </Router>
   );
 }
 

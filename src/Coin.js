@@ -30,12 +30,18 @@ const TossButton = styled.button`
 
 const ResultsConsole = styled.div`
   color: darkgray;
-  height: 240px;
+  height: 3em;
   margin: 0.5em 1em;
+  overflow: hidden;
   overflow-y: scroll;
   padding: 0.5em;
   text-align: left;
   text-transform: uppercase;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 `;
 
 const ResultNotification = styled.div`
@@ -49,7 +55,11 @@ const ResultNotification = styled.div`
   }
 `;
 
-export const Coin = ({ sevenTails = false, showTrump = false }) => {
+export const Coin = ({
+  sevenTails = false,
+  showTrump = false,
+  showShapes = false,
+} = {}) => {
   const resultsConsoleElement = useRef(null);
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
@@ -168,22 +178,40 @@ export const Coin = ({ sevenTails = false, showTrump = false }) => {
     }
   }, [state.results]);
 
-  const _getCoin = ({ sevenTails = false, showTrump = false } = {}) => {
-    return (
-      <>
-        <div className="coin-container">
-          <div
-            className={cx("coin-heads", { "coin-heads-trump": showTrump })}
-            id="coin-heads"
-            style={{ zIndex: 2 * _getZ(COIN_STATE.HEADS) }}
-          ></div>
-          <div
-            className={cx("coin-tails", { "coin-tails-trump": showTrump })}
-            id="coin-tails"
-            style={{ zIndex: 2 * _getZ(COIN_STATE.TAILS) }}
-          ></div>
-        </div>
-        <div className="buttons-container">
+  return (
+    <>
+      <div className="coin-container">
+        <div
+          className={cx("coin-heads", {
+            "coin-heads-trump": showTrump,
+            "coin-heads-shapes": showShapes,
+          })}
+          id="coin-heads"
+          style={{ zIndex: 2 * _getZ(COIN_STATE.HEADS) }}
+        ></div>
+        <div
+          className={cx("coin-tails", {
+            "coin-tails-trump": showTrump,
+            "coin-tails-shapes": showShapes,
+          })}
+          id="coin-tails"
+          style={{ zIndex: 2 * _getZ(COIN_STATE.TAILS) }}
+        ></div>
+      </div>
+      <div className="buttons-container">
+        <TossButton
+          onClick={() => {
+            dispatch({ type: ACTIONS.CONSOLE_MESSAGE_RESET });
+            dispatch({ type: ACTIONS.SUCCESS_MESSAGE_RESET });
+            dispatch({ type: ACTIONS.RESULTS_RESET });
+            dispatch({ type: ACTIONS.HEADS_COUNT_RESET });
+            dispatch({ type: ACTIONS.TAILS_COUNT_RESET });
+            dispatch({ type: ACTIONS.TOSS_COIN });
+          }}
+        >
+          Coin Toss
+        </TossButton>
+        {sevenTails && (
           <TossButton
             onClick={() => {
               dispatch({ type: ACTIONS.CONSOLE_MESSAGE_RESET });
@@ -191,43 +219,25 @@ export const Coin = ({ sevenTails = false, showTrump = false }) => {
               dispatch({ type: ACTIONS.RESULTS_RESET });
               dispatch({ type: ACTIONS.HEADS_COUNT_RESET });
               dispatch({ type: ACTIONS.TAILS_COUNT_RESET });
-              dispatch({ type: ACTIONS.TOSS_COIN });
+              dispatch({ type: ACTIONS.TOSS_COIN_UNTIL_TAILS });
             }}
           >
-            Coin Toss
+            Keep tossing until 7 tails in a row
           </TossButton>
-          {sevenTails && (
-            <TossButton
-              onClick={() => {
-                dispatch({ type: ACTIONS.CONSOLE_MESSAGE_RESET });
-                dispatch({ type: ACTIONS.SUCCESS_MESSAGE_RESET });
-                dispatch({ type: ACTIONS.RESULTS_RESET });
-                dispatch({ type: ACTIONS.HEADS_COUNT_RESET });
-                dispatch({ type: ACTIONS.TAILS_COUNT_RESET });
-                dispatch({ type: ACTIONS.TOSS_COIN_UNTIL_TAILS });
-              }}
-            >
-              Coin toss until 7 tails in a row
-            </TossButton>
-          )}
-        </div>
-        <ResultNotification>
-          {(state.headsCount || state.tailsCount) && !state.isAnimating ? (
-            <h4>{state.successMessage}</h4>
-          ) : (
-            <></>
-          )}
-        </ResultNotification>
-        {sevenTails && (
-          <ResultsConsole ref={resultsConsoleElement}>
-            {state.consoleMessage}
-          </ResultsConsole>
         )}
-      </>
-    );
-  };
-
-  return <>{() => _getCoin({ sevenTails, showTrump })}</>;
+      </div>
+      <ResultNotification>
+        {(state.headsCount || state.tailsCount) && !state.isAnimating ? (
+          <h4>{state.successMessage}</h4>
+        ) : (
+          <></>
+        )}
+      </ResultNotification>
+      {sevenTails && (
+        <ResultsConsole ref={resultsConsoleElement}>
+          {state.consoleMessage}
+        </ResultsConsole>
+      )}
+    </>
+  );
 };
-
-export default Coin;

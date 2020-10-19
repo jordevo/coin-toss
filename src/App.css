@@ -5,7 +5,7 @@
 }
 
 .App-content {
-  align-items: stretch;
+  align-items: center;
   display: flex;
   flex-flow: column;
   justify-content: center;
@@ -44,6 +44,10 @@
 
 .coin-heads.coin-heads-trump {
   background-image: url("./img/headsTrump.png");
+}
+
+.coin-heads.coin-heads-shapes {
+  background-image: url("./img/square.png");
 }
 
 /*
@@ -101,6 +105,10 @@
 
 .coin-tails.coin-tails-trump {
   background-image: url("./img/tailsTrump.png");
+}
+
+.coin-tails.coin-tails-shapes {
+  background-image: url("./img/circle.png");
 }
 
 /*
